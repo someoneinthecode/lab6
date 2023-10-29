@@ -1,0 +1,324 @@
+using System;
+using System.Collections.Generic;
+
+// Завдання 1
+abstract class Vehicle
+{
+    public double Speed { get; set; }
+    public int Capacity { get; set; }
+
+    public abstract void Move();
+}
+
+class Human : Vehicle
+{
+    public Human(double speed)
+    {
+        Speed = speed;
+    }
+
+    public override void Move()
+    {
+        Console.WriteLine("Human is moving with a speed of " + Speed + " km/h.");
+    }
+}
+
+class Car : Vehicle
+{
+    public Car(double speed, int capacity)
+    {
+        Speed = speed;
+        Capacity = capacity;
+    }
+
+    public override void Move()
+    {
+        Console.WriteLine("Car is moving with a speed of " + Speed + " km/h.");
+    }
+}
+
+class Bus : Vehicle
+{
+    public Bus(double speed, int capacity)
+    {
+        Speed = speed;
+        Capacity = capacity;
+    }
+
+    public override void Move()
+    {
+        Console.WriteLine("Bus is moving with a speed of " + Speed + " km/h.");
+    }
+}
+
+class Train : Vehicle
+{
+    public Train(double speed, int capacity)
+    {
+        Speed = speed;
+        Capacity = capacity;
+    }
+
+    public override void Move()
+    {
+        Console.WriteLine("Train is moving with a speed of " + Speed + " km/h.");
+    }
+}
+
+class Route
+{
+    public string StartPoint { get; set; }
+    public string EndPoint { get; set; }
+
+    public Route(string start, string end)
+    {
+        StartPoint = start;
+        EndPoint = end;
+    }
+
+    public string CalculateOptimalRoute(string[] waypoints)
+    {
+
+        return "Optimal route: " + string.Join(" -> ", waypoints);
+    }
+}
+
+class TransportNetwork
+{
+    private List<Vehicle> vehicles = new List<Vehicle>();
+
+    public void AddVehicle(Vehicle vehicle)
+    {
+        vehicles.Add(vehicle);
+    }
+
+    public void ControlMovement()
+    {
+        foreach (var vehicle in vehicles)
+        {
+            vehicle.Move();
+        }
+    }
+
+
+}
+
+// Завдання 2
+class MathOperations
+{
+    public static int Add(int a, int b)
+    {
+        return a + b;
+    }
+
+    public static double Add(double a, double b)
+    {
+        return a + b;
+    }
+
+    public static int[] Add(int[] arr1, int[] arr2)
+    {
+        if (arr1.Length != arr2.Length)
+            throw new ArgumentException("Arrays must have the same length");
+
+        int[] result = new int[arr1.Length];
+        for (int i = 0; i < arr1.Length; i++)
+        {
+            result[i] = arr1[i] + arr2[i];
+        }
+        return result;
+    }
+
+    public static double[,] Add(double[,] matrix1, double[,] matrix2)
+    {
+        if (matrix1.GetLength(0) != matrix2.GetLength(0) || matrix1.GetLength(1) != matrix2.GetLength(1))
+            throw new ArgumentException("Matrices must have the same dimensions");
+
+        int rows = matrix1.GetLength(0);
+        int cols = matrix1.GetLength(1);
+
+        double[,] result = new double[rows, cols];
+        for (int i = 0; i < rows; i++)
+        {
+            for (int j = 0; j < cols; j++)
+            {
+                result[i, j] = matrix1[i, j] + matrix2[i, j];
+            }
+        }
+        return result;
+    }
+}
+
+// Завдання 3
+class Quaternion
+{
+    public double X { get; set; }
+    public double Y { get; set; }
+    public double Z { get; set; }
+    public double W { get; set; }
+
+    public Quaternion(double x, double y, double z, double w)
+    {
+        X = x;
+        Y = y;
+        Z = z;
+        W = w;
+    }
+
+    public static Quaternion operator +(Quaternion q1, Quaternion q2)
+    {
+        return new Quaternion(q1.X + q2.X, q1.Y + q2.Y, q1.Z + q2.Z, q1.W + q2.W);
+    }
+
+    public static bool operator ==(Quaternion q1, Quaternion q2)
+    {
+        return q1.X == q2.X && q1.Y == q2.Y && q1.Z == q2.Z && q1.W == q2.W;
+    }
+
+    public static bool operator !=(Quaternion q1, Quaternion q2)
+    {
+        return !(q1 == q2);
+    }
+
+    public double Norm()
+    {
+        return Math.Sqrt(X * X + Y * Y + Z * Z + W * W);
+    }
+
+    public Quaternion Conjugate()
+    {
+        return new Quaternion(-X, -Y, -Z, W);
+    }
+
+    public Quaternion Inverse()
+    {
+        double norm = Norm();
+        if (norm == 0)
+            throw new InvalidOperationException("Quaternion norm is zero, cannot compute inverse.");
+        double normSquared = norm * norm;
+        Quaternion conjugate = Conjugate();
+        return new Quaternion(conjugate.X / normSquared, conjugate.Y / normSquared, conjugate.Z / normSquared, conjugate.W / normSquared);
+    }
+
+
+
+    public Matrix ToMatrix()
+    {
+        double x2 = X * X;
+        double y2 = Y * Y;
+        double z2 = Z * Z;
+        double xy = X * Y;
+        double xz = X * Z;
+        double yz = Y * Z;
+        double xw = X * W;
+        double yw = Y * W;
+        double zw = Z * W;
+
+        double[,] matrix = new double[3, 3];
+        matrix[0, 0] = 1 - 2 * (y2 + z2);
+        matrix[0, 1] = 2 * (xy - zw);
+        matrix[0, 2] = 2 * (xz + yw);
+        matrix[1, 0] = 2 * (xy + zw);
+        matrix[1, 1] = 1 - 2 * (x2 + z2);
+        matrix[1, 2] = 2 * (yz - xw);
+        matrix[2, 0] = 2 * (xz - yw);
+        matrix[2, 1] = 2 * (yz + xw);
+        matrix[2, 2] = 1 - 2 * (x2 + y2);
+
+        return new Matrix(matrix);
+    }
+}
+
+class Matrix
+{
+    public double[,] Data { get; set; }
+
+    public Matrix(double[,] data)
+    {
+        Data = data;
+    }
+
+    public static Quaternion ToQuaternion(Matrix matrix)
+    {
+        double trace = matrix.Data[0, 0] + matrix.Data[1, 1] + matrix.Data[2, 2];
+        double s;
+
+        if (trace > 0)
+        {
+            s = 0.5 / Math.Sqrt(trace + 1.0);
+            double w = 0.25 / s;
+            double x = (matrix.Data[2, 1] - matrix.Data[1, 2]) * s;
+            double y = (matrix.Data[0, 2] - matrix.Data[2, 0]) * s;
+            double z = (matrix.Data[1, 0] - matrix.Data[0, 1]) * s;
+            return new Quaternion(x, y, z, w);
+        }
+        else if (matrix.Data[0, 0] > matrix.Data[1, 1] && matrix.Data[0, 0] > matrix.Data[2, 2])
+        {
+            s = 2.0 * Math.Sqrt(1.0 + matrix.Data[0, 0] - matrix.Data[1, 1] - matrix.Data[2, 2]);
+            double x = 0.25 * s;
+            double y = (matrix.Data[0, 1] + matrix.Data[1, 0]) / s;
+            double z = (matrix.Data[0, 2] + matrix.Data[2, 0]) / s;
+            double w = (matrix.Data[2, 1] - matrix.Data[1, 2]) / s;
+            return new Quaternion(x, y, z, w);
+        }
+        else if (matrix.Data[1, 1] > matrix.Data[2, 2])
+        {
+            s = 2.0 * Math.Sqrt(1.0 + matrix.Data[1, 1] - matrix.Data[0, 0] - matrix.Data[2, 2]);
+            double x = (matrix.Data[0, 1] + matrix.Data[1, 0]) / s;
+            double y = 0.25 * s;
+            double z = (matrix.Data[1, 2] + matrix.Data[2, 1]) / s;
+            double w = (matrix.Data[0, 2] - matrix.Data[2, 0]) / s;
+            return new Quaternion(x, y, z, w);
+        }
+        else
+        {
+            s = 2.0 * Math.Sqrt(1.0 + matrix.Data[2, 2] - matrix.Data[0, 0] - matrix.Data[1, 1]);
+            double x = (matrix.Data[0, 2] + matrix.Data[2, 0]) / s;
+            double y = (matrix.Data[1, 2] + matrix.Data[2, 1]) / s;
+            double z = 0.25 * s;
+            double w = (matrix.Data[1, 0] - matrix.Data[0, 1]) / s;
+            return new Quaternion(x, y, z, w);
+        }
+    }
+}
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        // Завдання 1
+        Vehicle car = new Car(60, 5);
+        Vehicle bus = new Bus(40, 20);
+        Vehicle train = new Train(120, 200);
+        Vehicle human = new Human(5);
+
+        TransportNetwork network = new TransportNetwork();
+        network.AddVehicle(car);
+        network.AddVehicle(bus);
+        network.AddVehicle(train);
+
+        // Завдання 2
+        int result1 = MathOperations.Add(5, 3);
+        double result2 = MathOperations.Add(2.5, 3.7);
+        int[] arrayResult = MathOperations.Add(new int[] { 1, 2, 3 }, new int[] { 4, 5, 6 });
+
+        // Завдання 3
+        Quaternion q1 = new Quaternion(1, 2, 3, 4);
+        Quaternion q2 = new Quaternion(2, 3, 4, 5);
+        Quaternion sum = q1 + q2;
+
+        double norm = sum.Norm();
+        Console.WriteLine("Norm of the sum: " + norm);
+
+        Quaternion conjugate = sum.Conjugate();
+        Console.WriteLine("Conjugate of the sum: (" + conjugate.X + ", " + conjugate.Y + ", " + conjugate.Z + ", " + conjugate.W + ")");
+
+        Quaternion inverse = sum.Inverse();
+        Console.WriteLine("Inverse of the sum: (" + inverse.X + ", " + inverse.Y + ", " + inverse.Z + ", " + inverse.W + ")");
+
+
+        Matrix matrix = q1.ToMatrix();
+        Quaternion fromMatrix = Matrix.ToQuaternion(matrix);
+        Console.WriteLine("Quaternion from matrix: (" + fromMatrix.X + ", " + fromMatrix.Y + ", " + fromMatrix.Z + ", " + fromMatrix.W + ")");
+    }
+}
